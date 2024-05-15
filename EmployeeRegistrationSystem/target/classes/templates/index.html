@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Employee Management</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+	<style>
+		.container {
+			margin-top: 50px;
+		}
+
+		.search-form,
+		.sort-form {
+			margin-bottom: 20px;
+			margin-top: 20px;
+		}
+
+		.table {
+			margin-bottom: 30px;
+		}
+
+		thead {
+			background-color: rgb(72, 72, 72);
+			color: #eee;
+		}
+
+		input[type=checkbox] {}
+
+		.pagination {
+			margin-top: 30px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<h1 class="text-center">Employee Management</h1>
+
+		<!-- Button to open the modal to create a new employee -->
+		<button type="button" class="btn btn-primary" onclick="loadCreateEmployeeForm()">Create Employee</button>
+
+		<!-- Modal -->
+		<div class="modal fade" id="createEmployeeModal" tabindex="-1" role="dialog"
+			aria-labelledby="createEmployeeModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="createEmployeeModalLabel">Create New Employee</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<!-- Content loaded via AJAX will be placed here -->
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<!-- You can add additional buttons here if needed -->
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="row mt-4">
+			<!-- searching -->
+			<div class="col-md-6 search-form">
+				<form action="/" method="get">
+					<div class="input-group">
+						<input type="text" class="form-control" id="search" name="search" placeholder="Search by name">
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="submit">Search</button>
+						</span>
+					</div>
+				</form>
+			</div>
+
+			<!-- sorting -->
+			<div class="col-md-6 sort-form">
+				<form action="/" method="get">
+					<div class="form-inline pull-right">
+						<div class="form-group">
+							<label for="sortBy">Sort by:</label>
+							<select class="form-control" id="sortBy" name="sortBy">
+								<option value="id">Employee ID</option>
+								<option value="name">Name</option>
+								<!-- Add other sortable fields -->
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="sortOrder">Sort order:</label>
+							<select class="form-control" id="sortOrder" name="sortOrder">
+								<option value="asc">Ascending</option>
+								<option value="desc">Descending</option>
+							</select>
+						</div>
+						<button type="submit" class="btn btn-default">Sort</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<!-- displaying data in a table -->
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-hover table-responsive table-bordered thead-dark">
+					<thead>
+						<tr>
+							<th><input type="checkbox" id="selectAll"></th>
+							<th>Employee ID</th>
+							<th>Name</th>
+							<th>Age</th>
+							<th>Salary</th>
+							<th>Department</th>
+							<th>Gender</th>
+							<th>Joining Date</th>
+							<th>Retiring Date</th>
+							<th>Status</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="employee : ${page.content}">
+							<td><input type="checkbox" class="selectEmployee"></td>
+							<td th:text="${employee.id}">Employee ID</td>
+							<td th:text="${employee.name}">Name</td>
+							<td th:text="${employee.age}">Age</td>
+							<td th:text="${employee.salary}">Salary</td>
+							<td th:text="${employee.department}">Department</td>
+							<td th:text="${employee.gender}">Gender</td>
+							<td th:text="${employee.joiningDate}">Joining Date</td>
+							<td th:text="${employee.retiringDate}">Retiring Date</td>
+							<td th:text="${employee.status}">Status</td>
+							<td>
+								<a th:href="@{'/edit/' + ${employee.id}}" class="btn btn-primary btn-sm">Edit</a>
+								<a href="#" class="btn btn-danger btn-sm deleteBtn" data-id=`${employee.id}`
+									th:data-toggle="modal"
+									th:data-target="'#deleteConfirmationModal' + ${employee.id}">Delete</a>
+
+								<!-- Add delete confirmation modal -->
+								<div class="modal fade" th:id="'deleteConfirmationModal' + ${employee.id}" tabindex="-1"
+									role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+									<div class="modal-dialog" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title h4" id="deleteConfirmationModalLabel">Confirm Delete
+												<span>
+												<button type="button" class="close" data-dismiss="modal"
+													aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button></span></h5>
+											</div>
+											<div class="modal-body">
+												Are you sure you want to delete this employee?
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary"
+													data-dismiss="modal">Cancel</button>
+												<a id="confirmDeleteBtn" href="#" class="btn btn-danger">Delete</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- total count of rows -->
+		<div class="row">
+			<div class="col-md-12">
+				<p>Total Count: <span th:text="${page.totalElements}"></span></p>
+			</div>
+		</div>
+
+		<!-- pagination -->
+		<div class="row">
+			<div class="col-md-12">
+				<ul class="pagination">
+					<li th:class="${page.first ? 'disabled' : ''}">
+						<a href="#" th:href="@{/(page=0,size=${page.size},sort=${page.sort})}">&laquo;</a>
+					</li>
+					<li th:class="${page.first ? 'disabled' : ''}">
+						<a href="#"
+							th:href="@{/(page=${page.number - 1},size=${page.size},sort=${page.sort})}">Previous</a>
+					</li>
+					<li th:class="${page.last ? 'disabled' : ''}">
+						<a href="#" th:href="@{/(page=${page.number + 1},size=${page.size},sort=${page.sort})}">Next</a>
+					</li>
+					<li th:class="${page.last ? 'disabled' : ''}">
+						<a href="#"
+							th:href="@{/(page=${page.totalPages - 1},size=${page.size},sort=${page.sort})}">&raquo;</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// JavaScript for select all checkbox functionality
+		document.getElementById('selectAll').addEventListener('change', function () {
+			var checkboxes = document.getElementsByClassName('selectEmployee');
+			for (var i = 0; i < checkboxes.length; i++) {
+				checkboxes[i].checked = this.checked;
+			}
+		});
+
+		function loadCreateEmployeeForm() {
+			console.log('create button clicked');
+			$.get("/new_employee", function (data) {
+				$("#createEmployeeModal .modal-body").html(data);
+				$("#createEmployeeModal").modal("show");
+			});
+			// Event listener for the modal close event
+			$('#createEmployeeModal').on('hidden.bs.modal', function () {
+				$("#createEmployeeModal .modal-body").html("");
+			});
+		}
+
+	</script>
+
+	<script th:inline="javascript">
+		/* JavaScript to capture employee ID and update delete button URL */
+		var deleteBtns = document.querySelectorAll('.deleteBtn');
+		deleteBtns.forEach(function (btn) {
+			btn.addEventListener('click', function () {
+
+				console.log('Delete button clicked');
+
+				var employeeId = btn.getAttribute('data-id');
+				console.log('Employee ID:', employeeId); // Log employee ID
+
+				var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+				var deleteUrl = '/delete/' + employeeId;
+				console.log('Delete URL:', deleteUrl); // Log delete URL
+
+				confirmDeleteBtn.setAttribute('href', deleteUrl);
+			});
+		});
+
+
+	</script>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+		integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+
+</html>

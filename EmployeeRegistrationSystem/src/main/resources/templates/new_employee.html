@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<title>Create New Employee</title>
+<style>
+    body{
+        font-family: Tahoma;
+    }
+    .card{
+        width: 420px;
+        padding: 21px;
+        background: black;
+        color: white;
+    }
+</style>
+</head>
+<body>
+    <div id="createEmployeeModal" class="card" align="center">
+        <h1 class="card-title">Create New Employee</h1>
+        <br />
+        <form class="card-body" action="/save" method="post" th:object="${employee}">
+
+            <table border="0" cellpadding="10">
+                <tr>
+                    <td>Employee Name:</td>
+                    <td><input type="text" th:field="*{name}" /></td>
+                </tr>
+                
+                <tr>
+                    <td>Age:</td>
+                    <td><input type="text" th:field="*{age}" /></td>
+                </tr>
+                
+                <tr>
+                    <td>Salary:</td>
+                    <td><input type="text" th:field="*{salary}" /></td>
+                </tr>
+                
+                <tr>
+                    <td>Department:</td>
+                    <td>
+                        <select th:field="*{department}">
+                            <option value="IT">IT</option>
+                            <option value="HR">HR</option>
+                            <option value="Sales">Sales</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Gender:</td>
+                    <td>
+                        <input type="radio" th:field="*{gender}" value="Male"> Male
+                        <input type="radio" th:field="*{gender}" value="Female"> Female
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Joining Date:</td>
+                    <td><input type="date" id="join_datepicker" th:field="*{joiningDate}"></td>
+                </tr>
+                <tr>
+                    <td>Retiring Date:</td>
+                    <td><input type="date" id="retire_datepicker" th:field="*{retiringDate}"></td>
+                </tr>
+                <tr>
+                    <td>Status:</td>
+                    <td><input type="text" th:field="*{status}" /></td>
+                </tr>
+                
+                <tr>
+                    <td colspan="2"><button type="submit">Save</button></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+	
+</body>
+
+</html>
